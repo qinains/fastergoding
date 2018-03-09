@@ -1,5 +1,5 @@
 /*
-Package reload provides a function to automatically compile and run go code.
+Package fastergoding provides a function to automatically compile and run go code.
 Example:
 
 package main
@@ -9,11 +9,11 @@ import (
 	"log"
 	"net/http"
 
-	reload "github.com/qinains/hot-reload"
+	"github.com/qinains/fastergoding"
 )
 
 func main() {
-	reload.Run()
+	fastergoding.Run() // Just add this code
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello %s!", r.URL.Query().Get("name"))
@@ -25,7 +25,7 @@ func main() {
 }
 
 */
-package reload
+package fastergoding
 
 import (
 	"log"
@@ -136,7 +136,7 @@ func watch(rootPath string) {
 }
 
 /*
-Run automatically compile and run the main function when the file is changed.
+Run automatically compile and run the main function when the files is changed.
 */
 func Run() {
 	if os.Getenv(runMode) == runMode {
