@@ -34,3 +34,7 @@ func main() {
 go get -u github.com/golang/dep/cmd/dep
 dep ensure
 ```
+
+## Reference
+
+[https://github.com/beego/bee](https://github.com/beego/bee)
