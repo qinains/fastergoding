@@ -3,7 +3,11 @@
 A gopher tool for faster coding. It can automatically compile and rerun the main.main() function when the files is changed.
 
 ## Usage
-
+```bash
+cd {your-project}
+go get -u github.com/qinains/fastergoding
+```
+then edit the `main.go` file
 ```go
 package main
 
@@ -31,8 +35,8 @@ func main() {
 ## Develop
 
 ```bash
-go get -u github.com/golang/dep/cmd/dep
-dep ensure
+export GOPROXY=https://goproxy.cn #if you live in China
+go get -u github.com/qinains/fastergoding
 ```
 
 ## Reference
