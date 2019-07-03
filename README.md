@@ -16,12 +16,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/qinains/fastergoding"
+	"github.com/qinains/fastergoding" // add this code
 )
 
 func main() {
-	fastergoding.Run() // Just add this code
-
+	fastergoding.Run("-mod", "vendor", "-o", "myServer") // add this code
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello %s!", r.URL.Query().Get("name"))
 	})

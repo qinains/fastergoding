@@ -9,11 +9,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/qinains/fastergoding"
+	"github.com/qinains/fastergoding" // add this code
 )
 
 func main() {
-	fastergoding.Run() // Just add this code
+	fastergoding.Run("-mod", "vendor", "-o", "myServer") // add this code
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello %s!", r.URL.Query().Get("name"))
@@ -61,12 +61,20 @@ func runCmd(name string, args ...string) {
 	cmd.Run()
 }
 
-func restart(rootPath string) {
+func restart(rootPath string, buildArgs ...string) {
 	lock.Lock()
 	defer lock.Unlock()
 
-	runCmd("go", "install")
-	runCmd("go", "build")
+	appName := "./" + path.Base(rootPath)
+	cmdArgs := append([]string{"build", "-o", appName}, buildArgs...)
+	for index, buildArg := range buildArgs {
+		if strings.Contains(buildArg, "-o") {
+			appName = "./" + buildArgs[index+1]
+			cmdArgs = append([]string{"build"}, buildArgs...)
+			break
+		}
+	}
+	runCmd("go", cmdArgs...)
 
 	defer func() {
 		if e := recover(); e != nil {
@@ -93,7 +101,7 @@ func restart(rootPath string) {
 	}()
 }
 
-func watch(rootPath string) {
+func watch(rootPath string, buildArgs ...string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatalf("New Watcher error: %s", err)
@@ -114,7 +122,7 @@ func watch(rootPath string) {
 				if mt != mt2 {
 					go func() {
 						log.Printf("Fired by: %s", filePath)
-						restart(rootPath)
+						restart(rootPath, buildArgs...)
 					}()
 				}
 			case err := <-watcher.Errors:
@@ -138,15 +146,15 @@ func watch(rootPath string) {
 /*
 Run automatically compile and run the main function when the files is changed.
 */
-func Run() {
+func Run(buildArgs ...string) {
 	if os.Getenv(runMode) == runMode {
 		return
 	}
 	rootPath, _ := os.Getwd()
 	os.Chdir(rootPath)
 
-	watch(rootPath)
-	restart(rootPath)
+	watch(rootPath, buildArgs...)
+	restart(rootPath, buildArgs...)
 	for {
 		runtime.Goexit()
 	}
